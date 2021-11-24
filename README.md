@@ -12,3 +12,17 @@
 - Функция `find(value)` - принимает `value` и возвращает `true`, если элемент есть в дереве, иначе возвращает `false`. Пример `avl_tree.find(42)`
 - Функция `insert(value)` - принимает `value` и добавляет его в дерево. Пример `avl_tree.insert(42)`
 - Функция `print()` - печатает всё дерево в том порядке, как оно отсортировано. Пример `avl_tree.print()`
+
+```bash
+avl-tree
+│   .gitattributes
+│   .gitignore
+│   avl-tree.sln
+│   README.md
+└───main
+    │   avl_tree.h - библиотека с реализацией AVL-дерева
+    │   main.cpp - пример работы AVL-дерева
+    │   main.vcxproj
+    │   main.vcxproj.filters
+    │   main.vcxproj.user
+```
