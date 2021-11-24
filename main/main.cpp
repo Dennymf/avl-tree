@@ -1,5 +1,4 @@
 ﻿#include <iostream>
-#include <set>
 #include "avl_tree.h"
 
 int main()
