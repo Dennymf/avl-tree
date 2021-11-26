@@ -37,7 +37,25 @@ private:
 		return (v == nullptr ? 0 : v->depth);
 	}
 
-	template<class T>
+	Node* find_left(Node* v)
+	{
+		while (v->left != nullptr)
+		{
+			v = v->left;
+		}
+		return v;
+	}
+
+	Node* find_right(Node* v)
+	{
+		while (v->right != nullptr)
+		{
+			v = v->right;
+		}
+		return v;
+	}
+
+	template <class T>
 	Node* make_node(Node* left, T value, Node* right)
 	{
 		if (left == nullptr)
@@ -51,6 +69,32 @@ private:
 		else
 		{
 			return new Node(value, left->size + right->size + 1, std::max(left->depth, right->depth) + 1, left, right);
+		}
+	}
+
+	Node* rotate(Node* v)
+	{
+		if (depth(v->right) - depth(v->left) == 2 && depth(v->right->left) <= depth(v->right->right))
+		{
+			return left_rotate(v);
+		}
+		else if (depth(v->left) - depth(v->right) == 2 && depth(v->left->right) <= depth(v->left->left))
+		{
+			return right_rotate(v);
+		}
+		else if (depth(v->right) - depth(v->left) == 2 && depth(v->right->left) > depth(v->right->right))
+		{
+			v->right = right_rotate(v->right);
+			return left_rotate(v);
+		}
+		else if (depth(v->left) - depth(v->right) == 2 && depth(v->left->right) > depth(v->left->left))
+		{
+			v->left = left_rotate(v->left);
+			return right_rotate(v);
+		}
+		else
+		{
+			return v;
 		}
 	}
 
@@ -75,28 +119,7 @@ private:
 			return v;
 		}
 
-		if (depth(v->right) - depth(v->left) == 2 && depth(v->right->left) <= depth(v->right->right))
-		{
-			return left_rotate(v);
-		}
-		else if (depth(v->left) - depth(v->right) == 2 && depth(v->left->right) <= depth(v->left->left))
-		{
-			return right_rotate(v);
-		}
-		else if (depth(v->right) - depth(v->left) == 2 && depth(v->right->left) > depth(v->right->right))
-		{
-			v->right = right_rotate(v->right);
-			return left_rotate(v);
-		}
-		else if (depth(v->left) - depth(v->right) == 2 && depth(v->left->right) > depth(v->left->left))
-		{
-			v->left = left_rotate(v->left);
-			return right_rotate(v);
-		}
-		else
-		{
-			return v;
-		}
+		return rotate(v);
 	}
 	
 	template <class T>
@@ -119,6 +142,55 @@ private:
 		{
 			return true;
 		}
+	}
+
+	template <class T>
+	Node* erase(T value, Node* v)
+	{
+		if (v == nullptr)
+		{
+			return nullptr;
+		}
+
+		if (v->left == nullptr && v->right == nullptr && v->value == value)
+		{
+			if (v == root)
+			{
+				root = nullptr;
+			}
+			else
+			{
+				delete v;
+			}
+
+			return nullptr;
+		}
+
+		if (v->value < value)
+		{
+			v->right = erase(value, v->right);
+		}
+		else if (v->value > value)
+		{
+			v->left = erase(value, v->left);
+		}
+		else if(v->value == value)
+		{
+			if (v->left != nullptr)
+			{
+				Node* right = find_right(v->left);
+				v->value = right->value;
+				v->left = erase(right->value, v->left);
+			}
+			else
+			{
+				Node* left = find_left(v->right);
+				v->value = left->value;
+				v->right = erase(left->value, v->right);
+			}
+		}
+
+		return rotate(v);
 	}
 
 	void print(Node* v)
@@ -176,6 +248,17 @@ public:
 		return (root != nullptr ? root->depth : 0);
 	}
 
+	bool isEmpty()
+	{
+		return (root == nullptr || root->size == 0);
+	}
+
+	template <class T>
+	void erase(T value)
+	{
+		root = erase(value, root);
+	}
+
 	template <class T>
 	bool find(T value)
 	{
@@ -196,6 +279,7 @@ public:
 			std::cout << root->value << ' ';
 			print(root->right);
 		}
+		std::cout << '\n';
 	}
 };
 
